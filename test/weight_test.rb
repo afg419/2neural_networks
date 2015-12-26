@@ -21,4 +21,44 @@ class WeightTest < Minitest::Test
     assert target.weights_in.include?(w)
   end
 
+  def test_adds_delta
+    i,e = [rand(-1.0..1.0), rand(-1.0..1.0)]
+    source = Neuron.new(i)
+    target = Neuron.new
+    target.error = e
+    w = Weight.new(source,target)
+
+    assert_equal 0, w.modification_delta
+
+    w.add_delta
+
+    assert_equal i*e, w.modification_delta
+  end
+
+  def test_updates_weight
+    # source = Neuron.new(1)
+    # target = Neuron.new
+    # target.error = 1
+    # w = Weight.new(source,target)
+    #
+    # inits = Array.new(20,0).map{[rand(-1.0..1.0), rand(-1.0..1.0)]}
+    #
+    # inits.each do |i,e|
+    #   source.value = i
+    #   target.error = e
+    #
+    #
+    # end
+    #
+    # source = Neuron.new(i)
+    # target = Neuron.new
+    # target.error = e
+    #
+    # assert_equal 0, w.modification_delta
+    #
+    # w.add_delta
+    #
+    #  assert_equal i*e, w.modification_delta
+  end
+
 end

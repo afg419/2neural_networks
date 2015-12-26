@@ -76,6 +76,12 @@ class NeuralNetwork
       end
     end
   end
+
+  def contribute_new_weight_deltas
+    weights.each do |weight|
+      weight.add_delta
+    end
+  end
 end
 
 class Array

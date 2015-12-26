@@ -61,12 +61,7 @@ class NeuralNetworkTest < Minitest::Test
 
     assert nn.input_layer.errors.all?{|x| x.nil?}
     nn.hidden_layers.each do |layer|
-      layer.all?{|neuron| neuron.error.nil? if neuron.is_bias}
-    end
-
-    nn.hidden_layers.each do |layer|
-      layer.all?{|neuron| neuron.value == -1 if neuron.is_bias}
+      assert layer.all?{|neuron| neuron.is_bias ? neuron.error.nil? : !neuron.error.nil? }
     end
   end
-
 end
