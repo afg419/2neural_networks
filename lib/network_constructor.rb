@@ -1,28 +1,47 @@
-class NetworkAdapter
+module NetworkConstructor
 
-  def initialize(neural_network)
-    @net = neural_network
+  def new_layer(size)
+    Array.new(size, 0).map{|x| Neuron.new}
   end
 
-  def inject_inputs(inputs)
-    inputs.each_index do |i|
-      layers[0][i+1].value = inputs[i]
+  def create_neurons
+    hidden_neuron_layers = Array.new(number_of_hidden_layers, [])
+    hidden_neuron_layers.map! do |layer|
+      new_layer(hidden_layer_size)
+    end
+    @layers = [new_layer(input_size)] + hidden_neuron_layers + [new_layer(output_size)]
+  end
+
+  def create_weights
+    layers.each_index do |i|
+      add_weights_between(layers[i],layers[i+1])
+      break if layers[i+1] == layers[-1]
     end
   end
 
-  def forward_propogate(inputs)
-    inject_inputs(inputs)
+  def create_biases
+    layers.each_index do |i|
+      bias = Neuron.new(-1)
+      layers[i].unshift(bias)
+      layers[i+1].each do |target_neuron|
+        @weights << Weight.new(bias, target_neuron)
+      end
+      break if layers[i+1] == layers[-1]
+    end
+  end
 
-    layers[1..-2].each do |layer|
-      layer[1..-1].each do |neuron|
-        neuron.compute_output
+  def add_weights_between(source_neuron_array, target_neuron_array)
+    source_neuron_array.each do |source_neuron|
+      target_neuron_array.each do |target_neuron|
+        @weights << Weight.new(source_neuron,target_neuron)
       end
     end
-
-    layers[-1].each do |neuron|
-      neuron.compute_output
-    end
-
-    layers[-1].map(&:value)
   end
+
+  def create_network
+    create_neurons
+    create_weights
+    create_biases
+  end
+
 end

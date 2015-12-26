@@ -10,7 +10,7 @@ class NeuralNetworkTest < Minitest::Test
   def test_initializes_with_the_stuff
     nn = NeuralNetwork.new(4,3,2,4)
     assert_equal 4, nn.input_size
-    assert_equal 3, nn.hidden_layers
+    assert_equal 3, nn.number_of_hidden_layers
     assert_equal 2, nn.hidden_layer_size
     assert_equal 4, nn.output_size
     assert_equal [], nn.weights

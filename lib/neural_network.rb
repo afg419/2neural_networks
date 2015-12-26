@@ -1,63 +1,22 @@
 require_relative 'neuron'
 require_relative 'weight'
+require_relative 'network_constructor'
 require 'pry'
 
 class NeuralNetwork
 
-  attr_reader :hidden_layers, :hidden_layer_size, :layers, :input_size, :output_size, :weights
+  include NetworkConstructor
 
-  def initialize(inputs, hidden_layers, hidden_layer_size, outputs)
+  attr_reader :number_of_hidden_layers, :hidden_layer_size, :layers, :input_size, :output_size, :weights
+
+  def initialize(inputs, number_of_hidden_layers, hidden_layer_size, outputs, build = false)
     @input_size = inputs
-    @hidden_layers = hidden_layers
+    @number_of_hidden_layers = number_of_hidden_layers
     @hidden_layer_size = hidden_layer_size
     @output_size = outputs
     @weights = []
-    # create_network
+    create_network if build
   end
-
-      def new_layer(size)
-        Array.new(size, 0).map{|x| Neuron.new}
-      end
-
-      def create_neurons
-        hidden_neuron_layers = Array.new(hidden_layers, [])
-        hidden_neuron_layers.map! do |layer|
-          new_layer(hidden_layer_size)
-        end
-        @layers = [new_layer(input_size)] + hidden_neuron_layers + [new_layer(output_size)]
-      end
-
-      def create_weights
-        layers.each_index do |i|
-          add_weights_between(layers[i],layers[i+1])
-          break if layers[i+1] == layers[-1]
-        end
-      end
-
-      def create_biases
-        layers.each_index do |i|
-          bias = Neuron.new(-1)
-          layers[i].unshift(bias)
-          layers[i+1].each do |target_neuron|
-            @weights << Weight.new(bias, target_neuron)
-          end
-          break if layers[i+1] == layers[-1]
-        end
-      end
-
-      def add_weights_between(source_neuron_array, target_neuron_array)
-        source_neuron_array.each do |source_neuron|
-          target_neuron_array.each do |target_neuron|
-            @weights << Weight.new(source_neuron,target_neuron)
-          end
-        end
-      end
-
-      def create_network
-        create_neurons
-        create_weights
-        create_biases
-      end
 
   def input_layer
     layers[0]
@@ -67,7 +26,7 @@ class NeuralNetwork
     layers[-1]
   end
 
-  def hidden_layer_array
+  def hidden_layers
     layers[1..-2]
   end
 
@@ -75,35 +34,35 @@ class NeuralNetwork
     input_layer.exclude_bias.each_with_index do |neuron, i|
       neuron.value = inputs[i]
     end
-    #
-    # inputs.each_index do |i|
-    #   layers[0][i+1].value = inputs[i]
-    # end
   end
 
   def forward_propogate(inputs)
     inject_inputs(inputs)
 
-    layers[1..-2].each do |layer|
-      layer[1..-1].each do |neuron|
+    hidden_layers.each do |layer|
+      layer.exclude_bias.each do |neuron|
         neuron.compute_output
       end
     end
 
-    layers[-1].each do |neuron|
+    output_layer.each do |neuron|
       neuron.compute_output
     end
 
-    layers[-1].map(&:value)
+    output_layer.map(&:value)
   end
 
   def reset_values
-    layers.each do |layer|
-      layer[1..-1].each do |neuron|
+    biased_layers = [input_layer] + hidden_layers
+    biased_layers.each do |layer|
+      layer.exclude_bias.each do |neuron|
         neuron.value = nil
       end
     end
-    layers[-1][0].value = nil
+
+    output_layer.each do |neuron|
+      neuron.value = nil
+    end
   end
 
   def visualize_weights
