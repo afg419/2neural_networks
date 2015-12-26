@@ -8,7 +8,7 @@ class NeuralNetworkTest < Minitest::Test
   end
 
   def test_initializes_with_the_stuff
-    nn = NeuralNetwork.new(4,3,2,4)
+    nn = NeuralNetwork.new(4,3,2,4, build: false)
     assert_equal 4, nn.input_size
     assert_equal 3, nn.number_of_hidden_layers
     assert_equal 2, nn.hidden_layer_size
@@ -17,7 +17,7 @@ class NeuralNetworkTest < Minitest::Test
   end
 
   def test_creates_neuron_layers
-    nn = NeuralNetwork.new(0,0,0,0)
+    nn = NeuralNetwork.new(0,0,0,0,build: false)
     nl = nn.new_layer(4)
 
     assert_equal 4, nl.length
@@ -32,7 +32,7 @@ class NeuralNetworkTest < Minitest::Test
   end
 
   def test_creates_neurons
-    nn = NeuralNetwork.new(4,3,2,4)
+    nn = NeuralNetwork.new(4,3,2,4,build: false)
     nn.create_neurons
 
     assert_equal 5, nn.layers.length
@@ -51,7 +51,7 @@ class NeuralNetworkTest < Minitest::Test
   def test_creates_weights_between_adjacent_neuron_arrays
     source_nl = Array.new(3,0).map{|x| Neuron.new}
     target_nl = Array.new(2,0).map{|x| Neuron.new}
-    nn = NeuralNetwork.new(0,0,0,0)
+    nn = NeuralNetwork.new(0,0,0,0, build: false)
     nn.add_weights_between(source_nl,target_nl)
 
     assert_equal 6, nn.weights.length
@@ -68,7 +68,7 @@ class NeuralNetworkTest < Minitest::Test
   end
 
   def test_creates_weights
-    nn = NeuralNetwork.new(4,3,2,4)
+    nn = NeuralNetwork.new(4,3,2,4,build: false)
     nn.create_neurons
     nn.create_weights
 
@@ -120,7 +120,7 @@ class NeuralNetworkTest < Minitest::Test
   end
 
   def test_creates_biases
-    nn = NeuralNetwork.new(4,3,2,4)
+    nn = NeuralNetwork.new(4,3,2,4, build: false)
     nn.create_neurons
     nn.create_weights
     nn.create_biases
@@ -136,7 +136,6 @@ class NeuralNetworkTest < Minitest::Test
 
   def test_creates_network
     nn = NeuralNetwork.new(3,1,3,4)
-    nn.create_network
 
     assert_equal 3, nn.layers.length
 
@@ -156,7 +155,6 @@ class NeuralNetworkTest < Minitest::Test
 
   def test_injects_inputs
     nn = NeuralNetwork.new(3,1,3,4)
-    nn.create_network
     nn.inject_inputs([1,1,1])
 
     assert_equal [-1,1,1,1], nn.layers[0].map(&:value)
@@ -164,7 +162,6 @@ class NeuralNetworkTest < Minitest::Test
 
   def test_assigns_outputs
     nn = NeuralNetwork.new(3,1,3,4)
-    nn.create_network
     h1, h2, h3 = nn.layers[1][1..-1]
     o1, o2, o3, o4 = nn.layers[2]
 

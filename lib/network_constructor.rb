@@ -19,22 +19,22 @@ module NetworkConstructor
     end
   end
 
-  def create_biases
-    layers.each_index do |i|
-      bias = Neuron.new(-1)
-      layers[i].unshift(bias)
-      layers[i+1].each do |target_neuron|
-        @weights << Weight.new(bias, target_neuron)
-      end
-      break if layers[i+1] == layers[-1]
-    end
-  end
-
   def add_weights_between(source_neuron_array, target_neuron_array)
     source_neuron_array.each do |source_neuron|
       target_neuron_array.each do |target_neuron|
         @weights << Weight.new(source_neuron,target_neuron)
       end
+    end
+  end
+
+  def create_biases
+    layers.each_index do |i|
+      bias = Neuron.new(-1, bias: true)
+      layers[i].unshift(bias)
+      layers[i+1].each do |target_neuron|
+        @weights << Weight.new(bias, target_neuron)
+      end
+      break if layers[i+1] == layers[-1]
     end
   end
 

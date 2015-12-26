@@ -2,12 +2,13 @@ require_relative 'weight'
 
 class Neuron
   attr_accessor :value, :error
-  attr_reader :weights_out, :weights_in
+  attr_reader :weights_out, :weights_in, :is_bias
 
-  def initialize(value = nil)
+  def initialize(value = nil, opt = {bias: false})
     @weights_out = []
     @weights_in = []
     @value = value
+    @is_bias = opt[:bias]
   end
 
   def activation

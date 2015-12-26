@@ -9,13 +9,13 @@ class NeuralNetwork
 
   attr_reader :number_of_hidden_layers, :hidden_layer_size, :layers, :input_size, :output_size, :weights
 
-  def initialize(inputs, number_of_hidden_layers, hidden_layer_size, outputs, build = false)
+  def initialize(inputs, number_of_hidden_layers, hidden_layer_size, outputs, opts = {build: true})
     @input_size = inputs
     @number_of_hidden_layers = number_of_hidden_layers
     @hidden_layer_size = hidden_layer_size
     @output_size = outputs
     @weights = []
-    create_network if build
+    create_network if opts[:build]
   end
 
   def input_layer
@@ -31,7 +31,7 @@ class NeuralNetwork
   end
 
   def inject_inputs(inputs)
-    input_layer.exclude_bias.each_with_index do |neuron, i|
+    input_layer[1..-1].each_with_index do |neuron, i|
       neuron.value = inputs[i]
     end
   end
@@ -39,39 +39,26 @@ class NeuralNetwork
   def forward_propogate(inputs)
     inject_inputs(inputs)
 
-    hidden_layers.each do |layer|
-      layer.exclude_bias.each do |neuron|
-        neuron.compute_output
-      end
-    end
+    prop_layers = hidden_layers + [output_layer]
 
-    output_layer.each do |neuron|
-      neuron.compute_output
+    prop_layers.each do |layer|
+      layer.each do |neuron|
+        neuron.compute_output unless neuron.is_bias
+      end
     end
 
     output_layer.map(&:value)
   end
 
   def reset_values
-    biased_layers = [input_layer] + hidden_layers
-    biased_layers.each do |layer|
-      layer.exclude_bias.each do |neuron|
-        neuron.value = nil
+    layers.each do |layer|
+      layer.each do |neuron|
+        neuron.value = nil unless neuron.is_bias
       end
-    end
-
-    output_layer.each do |neuron|
-      neuron.value = nil
     end
   end
 
   def visualize_weights
-    weights.map{|w| "#{w.source.value} -- #{w.value} --> #{w.target.value}"}
-  end
-end
-
-class Array
-  def exclude_bias
-    self[1..-1]
+    weights.map{|w| "#{w.source.value} --#{w.value}--> #{w.target.value}"}
   end
 end
