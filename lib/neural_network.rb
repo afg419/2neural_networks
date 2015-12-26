@@ -70,7 +70,7 @@ class NeuralNetwork
   def backward_propogate(inputs, expected_outputs)
     inject_errors(inputs, expected_outputs)
 
-    hidden_layers.each do |layer|
+    hidden_layers.reverse.each do |layer|
       layer.each do |neuron|
         neuron.compute_error unless neuron.is_bias
       end

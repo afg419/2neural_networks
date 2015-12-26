@@ -49,11 +49,24 @@ class NeuralNetworkTest < Minitest::Test
   end
 
   def test_injects_errors
-    nn = NeuralNetwork.new(3,1,3,4)
+    nn = NeuralNetwork.new(3,2,3,4)
     nn.inject_errors([1,1,1],[1,1,1,1])
 
     assert nn.output_layer.all? {|x| x.error == x.value - 1}
-    binding.pry
+  end
+
+  def test_computes_errors
+    nn = NeuralNetwork.new(3,4,2,4)
+    nn.backward_propogate([1,1,1],[1,1,1,1])
+
+    assert nn.input_layer.errors.all?{|x| x.nil?}
+    nn.hidden_layers.each do |layer|
+      layer.all?{|neuron| neuron.error.nil? if neuron.is_bias}
+    end
+
+    nn.hidden_layers.each do |layer|
+      layer.all?{|neuron| neuron.value == -1 if neuron.is_bias}
+    end
   end
 
 end
