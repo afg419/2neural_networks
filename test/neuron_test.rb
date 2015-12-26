@@ -48,4 +48,31 @@ class NeuronTest < Minitest::Test
     assert_equal [i1,i2,i3], source_neurons.map(&:value)
     assert_equal computed, n.value
   end
+
+  def test_computes_pre_error
+    n = Neuron.new
+    target_neurons = Array.new(3,0).map{|x| Neuron.new}
+    target_neurons.each {|neu| neu.error = rand(-1.0..1.0)}
+
+    e1, e2, e3 = target_neurons.map {|x| x.error}
+    w1, w2, w3 = target_neurons.map {|x| Weight.new(n,x).value }
+
+    computed = (e1*w1 + e2*w2 + e3*w3)
+
+    assert_equal computed, n.pre_error
+  end
+
+  def test_computes_error
+    n = Neuron.new(2)
+    target_neurons = Array.new(3,0).map{|x| Neuron.new}
+    target_neurons.each {|neu| neu.error = rand(-1.0..1.0)}
+
+    e1, e2, e3 = target_neurons.map {|x| x.error}
+    w1, w2, w3 = target_neurons.map {|x| Weight.new(n,x).value }
+
+    computed = (e1*w1 + e2*w2 + e3*w3)*(n.value)*(1-n.value)
+    n.compute_error
+
+    assert_equal computed, n.error
+  end
 end

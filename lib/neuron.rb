@@ -24,4 +24,14 @@ class Neuron
   def compute_output
     @value = sigmoid(activation) if activation
   end
+
+  def pre_error
+    weights_out.reduce(0) do |error, weight|
+      error + weight.value * weight.target.error
+    end
+  end
+
+  def compute_error
+    @error = pre_error * value * (1 - value)
+  end
 end

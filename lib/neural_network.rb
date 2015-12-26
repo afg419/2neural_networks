@@ -38,7 +38,6 @@ class NeuralNetwork
 
   def forward_propogate(inputs)
     inject_inputs(inputs)
-
     prop_layers = hidden_layers + [output_layer]
 
     prop_layers.each do |layer|
@@ -46,7 +45,6 @@ class NeuralNetwork
         neuron.compute_output unless neuron.is_bias
       end
     end
-
     output_layer.map(&:value)
   end
 
@@ -60,5 +58,32 @@ class NeuralNetwork
 
   def visualize_weights
     weights.map{|w| "#{w.source.value} --#{w.value}--> #{w.target.value}"}
+  end
+
+  def inject_errors(inputs, expected_outputs)
+    actual_outputs = forward_propogate(inputs)
+    output_layer.each_with_index do |neuron, i|
+      neuron.error = actual_outputs[i] - expected_outputs[i]
+    end
+  end
+
+  def backward_propogate(inputs, expected_outputs)
+    inject_errors(inputs, expected_outputs)
+
+    hidden_layers.each do |layer|
+      layer.each do |neuron|
+        neuron.compute_error unless neuron.is_bias
+      end
+    end
+  end
+end
+
+class Array
+  def values
+    self.map{|x| x.value}
+  end
+
+  def errors
+    self.map{|x| x.error}
   end
 end
