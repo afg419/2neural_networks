@@ -15,8 +15,8 @@ class NetworkTrainerTest < Minitest::Test
       p nn.forward_propogate(i_o[:i])[0]
     end
 
-    nt = NetworkTrainer.new(training_set, nn, 0)
-    nt.train_network(500)
+    nt = NetworkTrainer.new(training_set, nn, 0.1, 0)
+    nt.train_network(2000)
 
     training_set.each do |i_o|
       p out = nn.forward_propogate(i_o[:i])[0]

@@ -83,9 +83,9 @@ class NeuralNetwork
     end
   end
 
-  def update_weights(example_count, regularization_constant)
+  def update_weights(example_count, learning_rate, regularization_constant)
     weights.each do |weight|
-      weight.update_value(example_count, regularization_constant)
+      weight.update_value(example_count, learning_rate, regularization_constant)
     end
   end
 end

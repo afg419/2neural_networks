@@ -16,8 +16,8 @@ class Weight
     self.modification_delta += source.value * target.error
   end
 
-  def update_value(example_count, regularization_constant)
-    self.value -= (1.0/example_count) * (modification_delta +
+  def update_value(example_count, learning_rate, regularization_constant)
+    self.value -= learning_rate * (1.0/example_count) * (modification_delta +
     (source.is_bias ? 0 : regularization_constant * value))
   end
 end
