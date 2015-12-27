@@ -3,7 +3,7 @@ require_relative 'neuron'
 class Weight
   attr_accessor :value, :source, :target, :modification_delta
 
-  def initialize(n_in, n_out, value = rand(-1.0..1.0))
+  def initialize(n_in, n_out, value = rand(-1.0/10..1.0/10))
     @value = value
     @source = n_in
     @target = n_out
@@ -17,7 +17,7 @@ class Weight
   end
 
   def update_value(example_count, regularization_constant)
-    self.value -= (1.0/example_count) * modification_delta +
-    (source.is_bias ? 0 : regularization_constant * value)
+    self.value -= (1.0/example_count) * (modification_delta +
+    (source.is_bias ? 0 : regularization_constant * value))
   end
 end

@@ -4,7 +4,7 @@ class NetworkTrainer
   attr_reader :training_set, :network, :regularization_constant
 
   def initialize(training_set, neural_network, regularization_constant)
-    @training_set = training_set #[{i: oijfoij, o: oijfoijf}, ... ]
+    @training_set = training_set 
     @network = neural_network
     @regularization_constant = regularization_constant
   end

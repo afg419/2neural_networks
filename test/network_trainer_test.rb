@@ -20,7 +20,7 @@ class NetworkTrainerTest < Minitest::Test
 
     training_set.each do |i_o|
       p out = nn.forward_propogate(i_o[:i])[0]
-      assert (i_o[:o] - out)**2 < 10 **(-20)
+      assert (i_o[:o] - out) ** 2 < 10 **(-20)
     end
   end
 
