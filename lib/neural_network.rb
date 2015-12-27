@@ -82,6 +82,12 @@ class NeuralNetwork
       weight.add_delta
     end
   end
+
+  def update_weights(example_count, regularization_constant)
+    weights.each do |weight|
+      weight.update_value(example_count, regularization_constant)
+    end
+  end
 end
 
 class Array
